@@ -1,6 +1,4 @@
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TextReverse {
 
@@ -31,23 +29,25 @@ public class TextReverse {
 		System.out.println(reversText);
 		return reversText;
 	}
-//	public String reversTextTest(String str) {
-//		String[] textArr = str.split("\\s");
-//		LinkedList<String> list = new LinkedList<>(Arrays.asList(textArr));
-//		for (int i = list.size()-1; i >=0 ; i--) {
-//			list.
-//		}
-//		System.out.println(list.element());
-//		return String.valueOf(list);
-//	}
+	public String reversTextTest(String str) {
+String[]strings = str.split("");
+Collection<String> stringCollection = null;
+stringCollection.add(String.valueOf(strings));
+
+
+
+		return str;
+	}
 	public static void main(String[] args) {
 		TextReverse textReverse = new TextReverse();
-//		textReverse.reversString("Do or do not, there is no try");
-		textReverse.reversStringTest("В бытность мою в С—м уезде мне часто приходилось бывать \" +\n" +
-				"\t\t\t\t\"на Дубовских огородах у огородника Саввы Стукача, или попросту Савки.");
+		textReverse.reversString("Do or do not, there is no try");
+		textReverse.reversStringTest("В бытность мою в С—м уезде мне часто приходилось бывать "  +
+				"\t\t\t\t\"на Дубовских огородах у огородника Саввы Стукача, или попросту Савки");
 		System.out.println("------------");
 		textReverse.reversText("В бытность мою в С—м уезде мне часто приходилось бывать " +
-				"на Дубовских огородах у огородника Саввы Стукача, или попросту Савки.");
+				"на Дубовских огородах у огородника Саввы Стукача, или попросту Савки");
+
+
 
 	}
 
