@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -45,4 +46,9 @@ public class User {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @ManyToMany(cascade={CascadeType.MERGE})
+    @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="userId", referencedColumnName="id")},
+            inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
+    private List<Meeting> meetingList;
 }
