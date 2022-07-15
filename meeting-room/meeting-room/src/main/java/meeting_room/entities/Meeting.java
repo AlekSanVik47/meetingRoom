@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "room")
+@Table(name = "meeting")
 public class Meeting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +30,9 @@ public class Meeting {
     @JoinColumn (name = "roomId", unique = true, nullable = false)
     private Room room;
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    private User user;
+
     public Long getId() {
         return id;
     }
@@ -41,4 +45,9 @@ public class Meeting {
     @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="meetingId", referencedColumnName="id")},
             inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
     private List<User> userList;
+
+    public void setRoom(Optional<Room> room) {
+
+    }
+
 }

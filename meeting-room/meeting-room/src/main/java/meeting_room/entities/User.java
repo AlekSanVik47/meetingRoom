@@ -51,4 +51,7 @@ public class User {
     @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="userId", referencedColumnName="id")},
             inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
     private List<Meeting> meetingList;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    List<Meeting> meetings;
 }

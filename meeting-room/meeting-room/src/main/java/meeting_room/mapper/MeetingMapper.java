@@ -1,5 +1,6 @@
 package meeting_room.mapper;
 
+import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
 import meeting_room.entities.User;
 import org.mapstruct.Mapper;
@@ -14,4 +15,5 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {User.class})
 public interface MeetingMapper {
+	Meeting toMeeting(MeetingDto meetingDto);
 }
