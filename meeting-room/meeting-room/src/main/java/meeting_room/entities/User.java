@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,6 +52,5 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
     private List<Meeting> meetingList;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    List<Meeting> meetings;
+
 }

@@ -28,18 +28,17 @@ public class MeetingService {
 
 	private final RoomRepository roomRepository;
 
-	private final RoomService roomService;
 
 	public Meeting addMeeting(MeetingDto meetingDto, Long id)throws PeriodCannotBeUsedException, ExceedsCapacityException {
 		if (meetingTimeCheckService(meetingDto)) {
 			Meeting meeting = meetingMapper.toMeeting(meetingDto);
+
 				List<User> userList = new ArrayList<>();
 				userList.add(userRepository.findUserById(id));
-				Optional<Room> room = roomService.getRoomById(meetingDto.getRoom().getId());
 				meeting.setStart(meetingDto.getStart());
 				meeting.setEnd(meetingDto.getEnd());
 				meeting.setUserList(userList);
-				meeting.setRoom(room);
+				meeting.setRoom(roomRepository.findById(meetingDto.getRoom().getId()).get());
 				meetingRepository.save(meeting);
 				return meeting;
 		}
@@ -51,7 +50,13 @@ public class MeetingService {
 	}
 
 	public List<Meeting> getMeetingByUser(Long userId){
-		return  meetingRepository.findAllByUserId(userId);
+		List<Meeting> meetings = meetingRepository.findAll();
+		meetings.stream()
+				.forEach((meeting -> meeting.getUserList()
+						.forEach(User::getId)));
+		System.out.println(meetings);
+		return meetings;
+
 	}
 
 	public boolean meetingTimeCheckService(MeetingDto dto){

@@ -19,8 +19,8 @@ public class RoomService {
 	}
 
 	private boolean capacityCheckService(int roomNumber, int countUser)throws ExceedsCapacityException{
-		Optional<Room> roomOptional=roomRepository.findRoomByRoomNumber(roomNumber);
-		int roomCapacity=roomOptional.get().getCapacity();
+		Room room=roomRepository.findRoomByRoomNumber(roomNumber);
+		int roomCapacity=room.getCapacity();
 		if (roomCapacity<countUser){
 			throw new ExceedsCapacityException("Превышена вместимость комнаты");
 		}

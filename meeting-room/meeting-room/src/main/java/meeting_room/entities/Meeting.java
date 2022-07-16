@@ -30,8 +30,6 @@ public class Meeting {
     @JoinColumn (name = "roomId", unique = true, nullable = false)
     private Room room;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    private User user;
 
     public Long getId() {
         return id;
@@ -46,8 +44,8 @@ public class Meeting {
             inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
     private List<User> userList;
 
-    public void setRoom(Optional<Room> room) {
-
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
 }

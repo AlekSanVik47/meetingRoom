@@ -5,9 +5,12 @@ import meeting_room.dto.UserDto;
 import meeting_room.entities.User;
 import meeting_room.mapper.UserMapper;
 import meeting_room.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +24,9 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private final PasswordEncoder passwordEncoder;
+
 
 	@Override
 	public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
@@ -40,7 +45,7 @@ public class UserServiceImpl implements UserService {
 	public boolean saveUser(UserDto userDto) {
 		User user= userMapper.toUser(userDto);
 		user.setLogin(userDto.getLogin());
-		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		user.setName(userDto.getName());
 		user.setSurname(user.getSurname());
 		user.setPatronymic(user.getPatronymic());
@@ -51,6 +56,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<User> getAllUsersByMeeting(Long meetingId){
-		return userRepository.findAllByMeetingId(meetingId);
+		return userRepository.findAllById(meetingId);
 	}
 }

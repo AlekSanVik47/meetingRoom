@@ -27,9 +27,8 @@ public class Room {
     @Column(name = "television")
     private String television;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "meetingId")
-//    private List<Meeting> meetingList;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Meeting> meetingList;
 
     public Long getId() {
         return id;
