@@ -1,8 +1,13 @@
 package meeting_room.exception;
 
-import java.sql.SQLException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class PeriodCannotBeUsedException extends SQLException {
-	public PeriodCannotBeUsedException(String s) {
+import java.sql.SQLException;
+@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+public class PeriodCannotBeUsedException extends RuntimeException {
+	private static final String PERIOD_ALREADY_IN_USE = "Период уже используется!";
+	public PeriodCannotBeUsedException() {
+		super(PERIOD_ALREADY_IN_USE);
 	}
 }

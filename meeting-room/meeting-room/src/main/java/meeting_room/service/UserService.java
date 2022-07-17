@@ -6,11 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public interface UserService extends UserDetailsService {
-	Optional<User> findByUserPhone (String phone);
+	User getDBUserByPhone(String phone);
 	@Transactional
-	boolean saveUser(UserDto userDto);
+	User saveUser(UserDto userDto);
 }

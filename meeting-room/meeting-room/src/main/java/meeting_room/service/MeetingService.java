@@ -42,7 +42,7 @@ public class MeetingService {
 				meetingRepository.save(meeting);
 				return meeting;
 		}
-		throw new PeriodCannotBeUsedException("Период уже используется!");
+		throw new PeriodCannotBeUsedException();
 	}
 
 	public List<Meeting> getMeetingsService(){
