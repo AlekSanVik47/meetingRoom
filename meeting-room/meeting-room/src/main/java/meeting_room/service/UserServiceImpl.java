@@ -3,7 +3,6 @@ package meeting_room.service;
 import lombok.RequiredArgsConstructor;
 import meeting_room.dto.UserDto;
 import meeting_room.entities.User;
-import meeting_room.exception.DataNotInDBException;
 import meeting_room.mapper.UserMapper;
 import meeting_room.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,27 +27,22 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-		Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByLogin(login));
-		User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+	public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
+		Optional<User> optionalUser= Optional.ofNullable(userRepository.findUserByPhone(phone));
+		User user = optionalUser.orElseThrow(()-> new UsernameNotFoundException("Пользователь не найден"));
 		return (UserDetails) user;
 	}
 
 
 	@Override
-	public User getDBUserByPhone(String phone) {
-		User user = userRepository.findUserByPhone(phone);
-		if (user != null) {
-			return userRepository.findUserByPhone(phone);
-		}
-		throw new DataNotInDBException();
+	public User findByUserPhone(String phone) {
+		return userRepository.findUserByPhone(phone);
 	}
-
 
 	@Override
 	public User saveUser(UserDto userDto) {
-		User user = userMapper.toUser(userDto);
-		if (getDBUserByPhone(userDto.getPhone()) != null) {
+		User user= userMapper.toUser(userDto);
+		if (findByUserPhone(userDto.getPhone())!=null){
 			return userRepository.findUserByPhone(userDto.getPhone());
 		}
 		user.setLogin(userDto.getLogin());
@@ -58,15 +52,14 @@ public class UserServiceImpl implements UserService {
 		user.setPatronymic(user.getPatronymic());
 		user.setPhone(user.getPhone());
 		user.setPosition(user.getPosition());
-		userRepository.save(user);
-		return user;
+		return userRepository.save(user);
 	}
 
-	public List<User> getAllUsersByMeeting(Long meetingId) {
+	public List<User> getAllUsersByMeeting(Long meetingId){
 		return userRepository.findAllById(meetingId);
 	}
 
-	public List<User> getAllUsers() {
+	public List<User> getAllUsers(){
 		List<User> userList = userRepository.findAll();
 		return userList;
 	}

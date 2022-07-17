@@ -22,7 +22,7 @@ public class RoomService {
 		Room room=roomRepository.findRoomByRoomNumber(roomNumber);
 		int roomCapacity=room.getCapacity();
 		if (roomCapacity<countUser){
-			throw new ExceedsCapacityException();
+			throw new ExceedsCapacityException("Превышена вместимость комнаты");
 		}
 
 		return true;

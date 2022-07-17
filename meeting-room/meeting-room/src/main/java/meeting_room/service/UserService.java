@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public interface UserService extends UserDetailsService {
-	User getDBUserByPhone(String phone);
+	User findByUserPhone (String phone);
 	@Transactional
 	User saveUser(UserDto userDto);
+
+
 }
