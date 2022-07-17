@@ -1,5 +1,6 @@
 package meeting_room.mapper;
 
+import meeting_room.dto.RoomDto;
 import meeting_room.entities.Room;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
@@ -17,6 +18,6 @@ public interface RoomMapper {
 //Optional<Room> toRoom(RoomDto roomDto);
 
 Room toRoom(Long id);
-
+ Room dtoToRoom(RoomDto roomDto);
 
 }

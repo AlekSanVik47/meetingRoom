@@ -9,6 +9,8 @@ import meeting_room.entities.User;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 @Data
 @Builder
@@ -17,8 +19,8 @@ import java.util.List;
 @Schema(description = "Транспортный объект встречи")
 public class MeetingDto implements Serializable {
     private Long id;
-    private LocalDate start;
-    private LocalDate end;
+    private ZonedDateTime start;
+    private ZonedDateTime end;
     private RoomDto room;
     private User user;
 }

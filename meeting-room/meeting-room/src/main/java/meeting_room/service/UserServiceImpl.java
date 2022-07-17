@@ -3,6 +3,7 @@ package meeting_room.service;
 import lombok.RequiredArgsConstructor;
 import meeting_room.dto.UserDto;
 import meeting_room.entities.User;
+import meeting_room.exception.UserNotFoundException;
 import meeting_room.mapper.UserMapper;
 import meeting_room.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,8 @@ public class UserServiceImpl implements UserService {
 	public List<User> getAllUsers(){
 		List<User> userList = userRepository.findAll();
 		return userList;
+	}
+	User getUser(Long id) {
+		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 	}
 }
