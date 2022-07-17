@@ -1,8 +1,12 @@
 package meeting_room.exception;
 
-public class ExceedsCapacityException extends RuntimeException{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-	public ExceedsCapacityException(String message) {
-		super(message);
+@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+public class ExceedsCapacityException extends RuntimeException {
+	private static final String CAPACITY_DOES_NOT_ALLOW = "Превышена вместимость комнаты";
+	public ExceedsCapacityException() {
+		super(CAPACITY_DOES_NOT_ALLOW);
 	}
 }

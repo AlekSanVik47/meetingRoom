@@ -1,17 +1,24 @@
 package meeting_room.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import meeting_room.entities.User;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
-
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema(description = "Транспортный объект встречи")
 public class MeetingDto implements Serializable {
-    private final Long id;
-    private final LocalDate start;
-    private final LocalDate end;
-    private final RoomDto room;
-    private final User user;
+    private Long id;
+    private LocalDate start;
+    private LocalDate end;
+    private RoomDto room;
+    private User user;
 }

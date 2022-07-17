@@ -14,6 +14,8 @@ import meeting_room.repositories.UserRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,14 +37,14 @@ public class MeetingService {
 
 				List<User> userList = new ArrayList<>();
 				userList.add(userRepository.findUserById(id));
-				meeting.setStart(meetingDto.getStart());
-				meeting.setEnd(meetingDto.getEnd());
+				meeting.setStart(LocalDateTime.from(meetingDto.getStart()));
+				meeting.setEnd(LocalDateTime.from(meetingDto.getEnd()));
 				meeting.setUserList(userList);
 				meeting.setRoom(roomRepository.findById(meetingDto.getRoom().getId()).get());
 				meetingRepository.save(meeting);
 				return meeting;
 		}
-		throw new PeriodCannotBeUsedException("Период уже используется!");
+		throw new PeriodCannotBeUsedException();
 	}
 
 	public List<Meeting> getMeetingsService(){
@@ -62,10 +64,10 @@ public class MeetingService {
 	public boolean meetingTimeCheckService(MeetingDto dto){
 		List<Meeting> meetingList= getMeetingsService();
 		for (Meeting m: meetingList) {
-			if ((m.getEnd().isBefore(dto.getStart())||
-					m.getEnd().isEqual(dto.getStart())) &&
-					(m.getStart().isAfter(dto.getEnd()))||
-					m.getStart().isEqual(dto.getEnd())){
+			if ((m.getEnd().isBefore(ChronoLocalDateTime.from(dto.getEnd()))||
+					m.getEnd().isEqual(ChronoLocalDateTime.from(dto.getStart()))) &&
+					(m.getStart().isAfter(ChronoLocalDateTime.from(dto.getEnd())))||
+					m.getStart().isEqual(ChronoLocalDateTime.from(dto.getEnd()))){
 				return true;
 			}
 		}

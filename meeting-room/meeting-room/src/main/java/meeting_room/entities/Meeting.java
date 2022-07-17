@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +22,10 @@ public class Meeting {
     private Long id;
 
     @Column(name = "start")
-    private LocalDate start;
+    private LocalDateTime start;
 
     @Column(name = "end")
-    private LocalDate end;
+    private LocalDateTime end;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "roomId", unique = true, nullable = false)
