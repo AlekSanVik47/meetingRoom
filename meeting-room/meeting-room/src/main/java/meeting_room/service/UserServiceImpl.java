@@ -65,6 +65,6 @@ public class UserServiceImpl implements UserService {
 		return userList;
 	}
 	User getUser(Long id) {
-		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(e));
 	}
 }

@@ -6,6 +6,7 @@ import meeting_room.entities.Meeting;
 import meeting_room.entities.Room;
 import meeting_room.entities.User;
 import meeting_room.exception.ExceedsCapacityException;
+import meeting_room.exception.MinTimeIntervalException;
 import meeting_room.exception.PeriodCannotBeUsedException;
 import meeting_room.exception.UserNotFoundException;
 import meeting_room.mapper.MeetingMapper;
@@ -28,26 +29,39 @@ import java.util.Optional;
 public class MeetingService {
 	private final MeetingRepository meetingRepository;
 	private final MeetingMapper meetingMapper;
+
 	private final UserRepository userRepository;
 	private final RoomRepository roomRepository;
-
 	private final UserServiceImpl userService;
+
+	private final int MIN_MEET_INTERVAL = 30;
 
 
 	public Meeting addMeeting(MeetingDto meetingDto, Long id)
-			throws PeriodCannotBeUsedException, ExceedsCapacityException, UserNotFoundException {
-		User user = userService.getUser(id);
-		if (meetingTimeCheckService(meetingDto)) {
-			Meeting meeting = meetingMapper.toMeeting(meetingDto);
-			List<User> userList = new ArrayList<>();
+			throws UserNotFoundException, PeriodCannotBeUsedException, ExceedsCapacityException,MinTimeIntervalException{
+		Meeting meeting = meetingMapper.toMeeting(meetingDto);
+		ZonedDateTime start = installStartTime(meetingDto);
+		ZonedDateTime end = installEndTime(meetingDto);
+		try {
+			User user = userService.getUser(id);
+			if (meetingTimeCheckService(meetingDto) && checkMinMeetInterval(meetingDto)) {
+				List<User> userList = new ArrayList<>();
 				userList.add(user);
-				meeting.setStart(meetingDto.getStart());
-				meeting.setEnd(meetingDto.getEnd());
+				meeting.setStart(start);
+				meeting.setEnd(end);
 				meeting.setUserList(userList);
 				meeting.setRoom(roomRepository.findById(meetingDto.getRoom().getId()).get());
-				return meetingRepository.save(meeting);
+			}
+		} catch (UserNotFoundException e) {
+			throw new UserNotFoundException(e);
+		} catch (PeriodCannotBeUsedException e){
+			throw new PeriodCannotBeUsedException();
+		} catch (ExceedsCapacityException e){
+			throw new ExceedsCapacityException();
+		} catch (MinTimeIntervalException e){
+			throw new MinTimeIntervalException();
 		}
-		throw new PeriodCannotBeUsedException();
+		return meetingRepository.save(meeting);
 	}
 
 	public List<Meeting> getMeetingsService(){
@@ -64,7 +78,7 @@ public class MeetingService {
 
 	}
 
-	public boolean meetingTimeCheckService(MeetingDto dto){
+	public boolean meetingTimeCheckService(MeetingDto dto) throws PeriodCannotBeUsedException{
 		List<Meeting> meetingList= getMeetingsService();
 		for (Meeting m: meetingList) {
 			if ((m.getEnd().isBefore(dto.getEnd()))||
@@ -74,9 +88,11 @@ public class MeetingService {
 				return true;
 			}
 		}
-		return false;
+		throw new PeriodCannotBeUsedException();
 	}
-	public int getMeetingTime(ZonedDateTime startMeeting, ZonedDateTime endMeeting){
+	public int getMeetingTime(MeetingDto meetingDto){
+		ZonedDateTime startMeeting = meetingDto.getStart();
+		ZonedDateTime endMeeting = meetingDto.getEnd();
 		Duration difference = Duration.between(startMeeting,endMeeting );
 				int meetTime = (int) difference.toMinutes();
 		return meetTime;
@@ -88,8 +104,28 @@ public class MeetingService {
 
 	}
 
-	public ZonedDateTime installDataTime(LocalDate date, LocalTime time){
-		ZonedDateTime dateTime = ZonedDateTime.of(date, time, ZoneId.systemDefault());
-		return dateTime;
+	public ZonedDateTime installStartTime(MeetingDto meetingDto){
+		LocalDate date = meetingDto.getStart().toLocalDate();
+		LocalTime time = meetingDto.getStart().toLocalTime();
+		ZonedDateTime startTime = ZonedDateTime.of(date, time, ZoneId.systemDefault());
+		return startTime;
 	}
+
+	public ZonedDateTime installEndTime(MeetingDto meetingDto){
+		LocalDate date = meetingDto.getStart().toLocalDate();
+		LocalTime time = meetingDto.getStart().toLocalTime();
+		ZonedDateTime endTime = ZonedDateTime.of(date, time, ZoneId.systemDefault());
+		return endTime;
+	}
+	public  boolean checkMinMeetInterval (MeetingDto meetingDto)throws MinTimeIntervalException {
+		Duration intervalMeeting = Duration.between(meetingDto.getStart(), meetingDto.getEnd());
+		int minutes = Math.toIntExact(intervalMeeting.toMinutes());
+		if (meetingDto.getStart().isBefore(meetingDto.getEnd())&&
+				minutes >= MIN_MEET_INTERVAL){
+			return true;
+		}
+		throw new MinTimeIntervalException();
+	}
+
+
 }

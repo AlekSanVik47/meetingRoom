@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserNotFoundException extends RuntimeException {
 	private static final String INTERNAL_SERVER_ERROR = "Пользователь не найден";
 
-	public UserNotFoundException() {
+	public UserNotFoundException(UserNotFoundException e) {
 		super(INTERNAL_SERVER_ERROR);
 	}
 }
