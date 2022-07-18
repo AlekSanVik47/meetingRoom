@@ -3,7 +3,6 @@ package meeting_room.service;
 import lombok.RequiredArgsConstructor;
 import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
-import meeting_room.entities.Room;
 import meeting_room.entities.User;
 import meeting_room.exception.ExceedsCapacityException;
 import meeting_room.exception.MinTimeIntervalException;
@@ -17,11 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Component
@@ -33,7 +30,6 @@ public class MeetingService {
 	private final UserRepository userRepository;
 	private final RoomRepository roomRepository;
 	private final UserServiceImpl userService;
-
 	private final int MIN_MEET_INTERVAL = 30;
 
 
@@ -42,8 +38,8 @@ public class MeetingService {
 		Meeting meeting = meetingMapper.toMeeting(meetingDto);
 		ZonedDateTime start = installStartTime(meetingDto);
 		ZonedDateTime end = installEndTime(meetingDto);
+		User user = userService.getUser(id);
 		try {
-			User user = userService.getUser(id);
 			if (meetingTimeCheckService(meetingDto) && checkMinMeetInterval(meetingDto)) {
 				List<User> userList = new ArrayList<>();
 				userList.add(user);
@@ -53,7 +49,7 @@ public class MeetingService {
 				meeting.setRoom(roomRepository.findById(meetingDto.getRoom().getId()).get());
 			}
 		} catch (UserNotFoundException e) {
-			throw new UserNotFoundException(e);
+			throw new UserNotFoundException();
 		} catch (PeriodCannotBeUsedException e){
 			throw new PeriodCannotBeUsedException();
 		} catch (ExceedsCapacityException e){

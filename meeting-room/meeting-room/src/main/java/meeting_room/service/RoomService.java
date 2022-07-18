@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,12 +32,19 @@ public class RoomService {
 		}
 		return true;
 	}
-
 	public Room saveRoom(RoomDto roomDto){
 		Room room = roomMapper.dtoToRoom(roomDto);
 		room.setRoomNumber(roomDto.getRoomNumber());
 		room.setCapacity(room.getCapacity());
 		room.setTelevision(roomDto.getTelevision());
 		return roomRepository.save(room);
+	}
+
+	public List<Room> getAllRooms(){
+		return roomRepository.findAll();
+	}
+
+	public Room getRoomByRoomNumber(int roomNumber){
+		return roomRepository.findRoomByRoomNumber(roomNumber);
 	}
 }

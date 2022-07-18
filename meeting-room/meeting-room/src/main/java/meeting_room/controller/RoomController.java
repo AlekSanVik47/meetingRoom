@@ -10,9 +10,9 @@ import meeting_room.service.RoomService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("room")
@@ -23,9 +23,25 @@ public class RoomController {
 	private final RoomService roomService;
 
 	@Operation(description = "Добавление комнаты в БД")
-	@PostMapping
+	@PostMapping(produces = {"application/json"},
+			consumes = {"application/json"})
 	public ResponseEntity<Room> saveRoomController(@Parameter(description = "Добавление комнаты для переговоров", required = true)
 												   @RequestBody(required = false)RoomDto request){
 		return ResponseEntity.ok(roomService.saveRoom(request));
+	}
+
+	@Operation(description = "Список комнат")
+	@GetMapping(produces = {"application/json"},
+	value = "{list}")
+	public ResponseEntity<List<Room>> getAllRoomsController(@Parameter(description = "Получение списка комнат")
+												  @RequestParam String list ){
+		List<Room> roomList = roomService.getAllRooms();
+		return ResponseEntity.ok(roomList);
+	}
+	@Operation(description = "Комната по номеру")
+	@GetMapping(value = "{roomNumber}")
+	public ResponseEntity<Room> getRoomByRoomNumberController(@Parameter(description = "Получение комнаты по номеру")
+												  @PathVariable int roomNumber ){
+		return ResponseEntity.ok(roomService.getRoomByRoomNumber(roomNumber));
 	}
 }

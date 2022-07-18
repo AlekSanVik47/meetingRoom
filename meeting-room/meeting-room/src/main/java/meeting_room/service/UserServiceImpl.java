@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 		List<User> userList = userRepository.findAll();
 		return userList;
 	}
-	User getUser(Long id) {
-		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(e));
+	User getUser(Long id)throws UsernameNotFoundException {
+		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
 	}
 }
