@@ -2,8 +2,6 @@ package meeting_room.mapper;
 
 import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
-import meeting_room.entities.Room;
-import meeting_room.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
@@ -15,8 +13,9 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
         unmappedTargetPolicy = IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {RoomMapper.class})
+		uses = {UserMapper.class, RoomMapper.class})
 public interface MeetingMapper {
-	@Mapping(target = "room", source = "id")
-	Meeting toMeeting(MeetingDto meetingDto);
+	@Mapping(target = "room", source = "roomDto")
+	@Mapping(target = "ownerID", source = "userDto")
+	Meeting toMeeting(MeetingDto meetingDto) ;
 }

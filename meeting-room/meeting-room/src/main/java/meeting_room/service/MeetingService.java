@@ -3,12 +3,15 @@ package meeting_room.service;
 import lombok.RequiredArgsConstructor;
 import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
+import meeting_room.entities.Room;
 import meeting_room.entities.User;
 import meeting_room.exception.ExceedsCapacityException;
 import meeting_room.exception.MinTimeIntervalException;
 import meeting_room.exception.PeriodCannotBeUsedException;
 import meeting_room.exception.UserNotFoundException;
 import meeting_room.mapper.MeetingMapper;
+import meeting_room.mapper.RoomMapper;
+import meeting_room.mapper.UserMapper;
 import meeting_room.repositories.MeetingRepository;
 import meeting_room.repositories.RoomRepository;
 import meeting_room.repositories.UserRepository;
@@ -19,6 +22,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Component
@@ -27,26 +31,31 @@ public class MeetingService {
 	private final MeetingRepository meetingRepository;
 	private final MeetingMapper meetingMapper;
 
+	private final RoomMapper roomMapper;
+	private final UserMapper userMapper;
+
 	private final UserRepository userRepository;
 	private final RoomRepository roomRepository;
 	private final UserServiceImpl userService;
 	private final int MIN_MEET_INTERVAL = 30;
 
 
-	public Meeting addMeeting(MeetingDto meetingDto, Long id)
+	public Meeting addMeeting(MeetingDto meetingDto)
 			throws UserNotFoundException, PeriodCannotBeUsedException, ExceedsCapacityException,MinTimeIntervalException{
 		Meeting meeting = meetingMapper.toMeeting(meetingDto);
 		ZonedDateTime start = installStartTime(meetingDto);
 		ZonedDateTime end = installEndTime(meetingDto);
-		User user = userService.getUser(id);
+		User user = userRepository.findUserById(meetingDto.getUserDto().getId());
+		List<User> users = new ArrayList<>();
+		users.add(user);
+		Room room = roomRepository.findRoomById(meetingDto.getRoomDto().getId());
 		try {
 			if (meetingTimeCheckService(meetingDto) && checkMinMeetInterval(meetingDto)) {
-				List<User> userList = new ArrayList<>();
-				userList.add(user);
+				meeting.setUserList(users);
+				meeting.setId(user.getId());
 				meeting.setStart(start);
 				meeting.setEnd(end);
-				meeting.setUserList(userList);
-				meeting.setRoom(roomRepository.findById(meetingDto.getRoom().getId()).get());
+				meeting.setRoom(room);
 			}
 		} catch (UserNotFoundException e) {
 			throw new UserNotFoundException();

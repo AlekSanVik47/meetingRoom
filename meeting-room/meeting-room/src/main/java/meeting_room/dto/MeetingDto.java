@@ -21,6 +21,6 @@ public class MeetingDto implements Serializable {
     private Long id;
     private ZonedDateTime start;
     private ZonedDateTime end;
-    private RoomDto room;
-    private User user;
+    private RoomDto roomDto;
+    private UserDto userDto;
 }

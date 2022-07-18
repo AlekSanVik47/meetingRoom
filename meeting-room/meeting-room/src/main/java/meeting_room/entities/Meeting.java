@@ -3,13 +3,11 @@ package meeting_room.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import meeting_room.dto.UserDto;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Data
@@ -32,14 +30,10 @@ public class Meeting {
     @JoinColumn (name = "roomId", unique = true, nullable = false)
     private Room room;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn (name = "userId", unique = true, nullable = false)
+    private User ownerID;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @ManyToMany(cascade={CascadeType.MERGE})
     @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="meetingId", referencedColumnName="id")},
@@ -49,5 +43,6 @@ public class Meeting {
     public void setRoom(Room room) {
         this.room = room;
     }
+
 
 }

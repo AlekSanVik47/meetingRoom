@@ -10,16 +10,12 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {Meeting.class})
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface UserMapper {
 
-    User toUser(UserDto dto);
 
     User userDtoToUser(UserDto userDto);
 
     UserDto userToUserDto(User user);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    User updateUserFromUserDto(UserDto userDto, @MappingTarget User user);
 }

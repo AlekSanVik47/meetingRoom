@@ -29,9 +29,10 @@ public class MeetingController {
 	@Operation(description = "Добавление митинга")
 	@PostMapping
 	public ResponseEntity<Meeting> addMeetingController(@Parameter(description = "Добавление митинга", required = true)
-	@RequestBody(required = false) MeetingDto request, Long userId)
+	@RequestBody(required = false) MeetingDto request)
 			throws PeriodCannotBeUsedException, ExceedsCapacityException{
-		return ResponseEntity.ok(meetingService.addMeeting(request, userId));
+		return ResponseEntity.ok(meetingService.addMeeting(request));
+
 	}
 
 
@@ -39,7 +40,7 @@ public class MeetingController {
 	@Operation(description = "Получение списка митингов пользователя")
 	@GetMapping(produces = {"application/json"})
 	public ResponseEntity<List<Meeting>> getMeetingByUserController(@Parameter(description = "Список митингов пользователя")
-																	@RequestParam Long userId) {
+																	@RequestParam Long userId, Long roomId) {
 		List<Meeting> meetings = meetingService.getMeetingByUser(userId);
 		return ResponseEntity.ok(meetings);
 	}

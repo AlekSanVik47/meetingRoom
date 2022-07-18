@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User saveUser(UserDto userDto) {
-		User user= userMapper.toUser(userDto);
+		User user= userMapper.userDtoToUser(userDto);
 		if (findByUserPhone(userDto.getPhone())!=null){
 			return userRepository.findUserByPhone(userDto.getPhone());
 		}
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 		List<User> userList = userRepository.findAll();
 		return userList;
 	}
-	User getUser(Long id)throws UsernameNotFoundException {
-		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+	User getUser(Long userId)throws UsernameNotFoundException {
+		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 	}
 }
