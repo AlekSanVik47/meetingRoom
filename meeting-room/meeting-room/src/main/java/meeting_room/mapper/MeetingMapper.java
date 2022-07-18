@@ -1,5 +1,6 @@
 package meeting_room.mapper;
 
+import meeting_room.dto.MeetingCreateDto;
 import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
 import org.mapstruct.Mapper;
@@ -18,4 +19,8 @@ public interface MeetingMapper {
 	@Mapping(target = "room", source = "roomDto")
 	@Mapping(target = "ownerID", source = "userDto")
 	Meeting toMeeting(MeetingDto meetingDto) ;
+
+	@Mapping(target = "room.id", source = "roomDto")
+	@Mapping(target = "ownerID.id", source = "userDto")
+	Meeting dtoToMeeting(MeetingCreateDto dto);
 }

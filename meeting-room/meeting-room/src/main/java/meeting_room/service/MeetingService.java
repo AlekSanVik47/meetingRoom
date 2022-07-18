@@ -1,7 +1,7 @@
 package meeting_room.service;
 
 import lombok.RequiredArgsConstructor;
-import meeting_room.dto.MeetingDto;
+import meeting_room.dto.MeetingCreateDto;
 import meeting_room.entities.Meeting;
 import meeting_room.entities.Room;
 import meeting_room.entities.User;
@@ -22,7 +22,6 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Component
@@ -40,17 +39,18 @@ public class MeetingService {
 	private final int MIN_MEET_INTERVAL = 30;
 
 
-	public Meeting addMeeting(MeetingDto meetingDto)
+	public Meeting addMeeting(MeetingCreateDto meetingCreateDto)
 			throws UserNotFoundException, PeriodCannotBeUsedException, ExceedsCapacityException,MinTimeIntervalException{
-		Meeting meeting = meetingMapper.toMeeting(meetingDto);
-		ZonedDateTime start = installStartTime(meetingDto);
-		ZonedDateTime end = installEndTime(meetingDto);
-		User user = userRepository.findUserById(meetingDto.getUserDto().getId());
+		Meeting meeting = meetingMapper.dtoToMeeting(meetingCreateDto);
+
+		ZonedDateTime start = installStartTime(meetingCreateDto);
+		ZonedDateTime end = installEndTime(meetingCreateDto);
+		User user = userRepository.findUserById(meetingCreateDto.getOwnerId());
 		List<User> users = new ArrayList<>();
 		users.add(user);
-		Room room = roomRepository.findRoomById(meetingDto.getRoomDto().getId());
+		Room room = roomRepository.findRoomById(meetingCreateDto.getRoomId());
 		try {
-			if (meetingTimeCheckService(meetingDto) && checkMinMeetInterval(meetingDto)) {
+			if (meetingTimeCheckService(meetingCreateDto) && checkMinMeetInterval(meetingCreateDto)) {
 				meeting.setUserList(users);
 				meeting.setId(user.getId());
 				meeting.setStart(start);
@@ -83,7 +83,7 @@ public class MeetingService {
 
 	}
 
-	public boolean meetingTimeCheckService(MeetingDto dto) throws PeriodCannotBeUsedException{
+	public boolean meetingTimeCheckService(MeetingCreateDto dto) throws PeriodCannotBeUsedException{
 		List<Meeting> meetingList= getMeetingsService();
 		for (Meeting m: meetingList) {
 			if ((m.getEnd().isBefore(dto.getEnd()))||
@@ -95,7 +95,7 @@ public class MeetingService {
 		}
 		throw new PeriodCannotBeUsedException();
 	}
-	public int getMeetingTime(MeetingDto meetingDto){
+	public int getMeetingTime(MeetingCreateDto meetingDto){
 		ZonedDateTime startMeeting = meetingDto.getStart();
 		ZonedDateTime endMeeting = meetingDto.getEnd();
 		Duration difference = Duration.between(startMeeting,endMeeting );
@@ -109,20 +109,20 @@ public class MeetingService {
 
 	}
 
-	public ZonedDateTime installStartTime(MeetingDto meetingDto){
+	public ZonedDateTime installStartTime(MeetingCreateDto meetingDto){
 		LocalDate date = meetingDto.getStart().toLocalDate();
 		LocalTime time = meetingDto.getStart().toLocalTime();
 		ZonedDateTime startTime = ZonedDateTime.of(date, time, ZoneId.systemDefault());
 		return startTime;
 	}
 
-	public ZonedDateTime installEndTime(MeetingDto meetingDto){
+	public ZonedDateTime installEndTime(MeetingCreateDto meetingDto){
 		LocalDate date = meetingDto.getStart().toLocalDate();
 		LocalTime time = meetingDto.getStart().toLocalTime();
 		ZonedDateTime endTime = ZonedDateTime.of(date, time, ZoneId.systemDefault());
 		return endTime;
 	}
-	public  boolean checkMinMeetInterval (MeetingDto meetingDto)throws MinTimeIntervalException {
+	public  boolean checkMinMeetInterval (MeetingCreateDto meetingDto)throws MinTimeIntervalException {
 		Duration intervalMeeting = Duration.between(meetingDto.getStart(), meetingDto.getEnd());
 		int minutes = Math.toIntExact(intervalMeeting.toMinutes());
 		if (meetingDto.getStart().isBefore(meetingDto.getEnd())&&

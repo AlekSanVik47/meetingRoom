@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import meeting_room.dto.MeetingCreateDto;
 import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
 import meeting_room.exception.ExceedsCapacityException;
@@ -29,7 +30,7 @@ public class MeetingController {
 	@Operation(description = "Добавление митинга")
 	@PostMapping
 	public ResponseEntity<Meeting> addMeetingController(@Parameter(description = "Добавление митинга", required = true)
-	@RequestBody(required = false) MeetingDto request)
+	@RequestBody(required = false) MeetingCreateDto request)
 			throws PeriodCannotBeUsedException, ExceedsCapacityException{
 		return ResponseEntity.ok(meetingService.addMeeting(request));
 
