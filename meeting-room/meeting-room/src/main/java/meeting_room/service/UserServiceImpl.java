@@ -67,4 +67,5 @@ public class UserServiceImpl implements UserService {
 	User getUser(Long userId)throws UsernameNotFoundException {
 		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 	}
+
 }

@@ -11,13 +11,9 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        uses = {MeetingMapper.class})
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface RoomMapper {
-
-//Optional<Room> toRoom(RoomDto roomDto);
-
-Room toRoom(Long id);
+ Room toRoom(Long id);
  Room dtoToRoom(RoomDto roomDto);
 
 }

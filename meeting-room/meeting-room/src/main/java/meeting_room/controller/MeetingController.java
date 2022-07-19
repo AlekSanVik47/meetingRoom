@@ -8,7 +8,9 @@ import meeting_room.dto.MeetingCreateDto;
 import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
 import meeting_room.exception.ExceedsCapacityException;
+import meeting_room.exception.MeetingNotFoundException;
 import meeting_room.exception.PeriodCannotBeUsedException;
+import meeting_room.exception.UserNotFoundException;
 import meeting_room.service.MeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +38,18 @@ public class MeetingController {
 
 	}
 
-
-
 	@Operation(description = "Получение списка митингов пользователя")
 	@GetMapping(produces = {"application/json"})
 	public ResponseEntity<List<Meeting>> getMeetingByUserController(@Parameter(description = "Список митингов пользователя")
 																	@RequestParam Long userId, Long roomId) {
 		List<Meeting> meetings = meetingService.getMeetingByUser(userId);
 		return ResponseEntity.ok(meetings);
+	}
+	@Operation(description = "Добавление участников")
+	@PutMapping
+	public ResponseEntity<Meeting> addUsersToMeetingController(@Parameter(description = "Добавление участников", required = true)
+															   @RequestBody(required = false) MeetingDto request, Long user1, Long user2)
+			throws UserNotFoundException, MeetingNotFoundException {
+		return ResponseEntity.ok(meetingService.addUsersToMeeting(request, 1L, 1L, 2L));
 	}
 }
