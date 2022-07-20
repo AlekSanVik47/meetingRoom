@@ -39,36 +39,25 @@ public class MeetingService {
     private final int MIN_MEET_INTERVAL = 30;
 
     @ExceptionHandler
-    public Meeting addMeeting(MeetingCreateDto meetingCreateDto)
-            throws UserNotFoundException, PeriodCannotBeUsedException, ExceedsCapacityException, MinTimeIntervalException {
+    public Meeting addMeeting(MeetingCreateDto meetingCreateDto) {
         Meeting meeting = meetingMapper.createMeetingToMeeting(meetingCreateDto);
-        ZonedDateTime start = installStartTime(meetingCreateDto);
-        ZonedDateTime end = installEndTime(meetingCreateDto);
-        User user = userRepository.findUserById(meetingCreateDto.getOwnerIDId());
+        ZonedDateTime startMeet = installStartTime(meetingCreateDto);
+        ZonedDateTime endMeet = installEndTime(meetingCreateDto);
+        User user = userService.getUser(meetingCreateDto.getOwnerIDId());
         List<User> users = new ArrayList<>();
         users.add(user);
         Room room = roomRepository.findRoomById(meetingCreateDto.getRoomId());
-        try {
-            if (meetingTimeCheckService(meetingCreateDto)
-                    && checkMinMeetInterval(meetingCreateDto)
-                    && userRepository.existsById(user.getId())) {
-                meeting.setOwnerID(user);
-                meeting.setUserList(users);
-                meeting.setId(user.getId());
-                meeting.setStart(start);
-                meeting.setEnd(end);
-                meeting.setRoom(room);
-            }
-        } catch (UserNotFoundException e) {
-            throw new UserNotFoundException();
-        } catch (PeriodCannotBeUsedException e) {
-            throw new PeriodCannotBeUsedException();
-        } catch (ExceedsCapacityException e) {
-            throw new ExceedsCapacityException();
-        } catch (MinTimeIntervalException e) {
-            throw new MinTimeIntervalException();
+        if (meetingTimeCheckService(meetingCreateDto)
+                && checkMinMeetInterval(meetingCreateDto)) {
+            meeting.setStart(startMeet);
+            meeting.setEnd(endMeet);
+            meeting.setRoom(room);
+            meeting.setId(user.getId());
+            meeting.setOwnerID(user);
+            meeting.setUserList(users);
         }
-        return meetingRepository.save(meeting);
+        System.out.println(meetingRepository.save(meeting));
+        return meeting;
     }
 
     public List<Meeting> getMeetingsService() {
@@ -88,11 +77,13 @@ public class MeetingService {
     @ExceptionHandler
     public boolean meetingTimeCheckService(MeetingCreateDto dto) throws PeriodCannotBeUsedException {
         List<Meeting> meetingList = getMeetingsService();
-        if (meetingList == null){
-            if (dto.getStart().isBefore(dto.getStart())){
+        if (meetingList.size() == 0) {
+            if (dto.getStart().isBefore(dto.getEnd())) {
+                System.out.println(dto.getStart().isBefore(dto.getStart()));
                 return true;
             }
         }
+        if (meetingList.size() > 0) {
             for (Meeting m : meetingList) {
                 if ((m.getEnd().isBefore(dto.getEnd())) ||
                         m.getEnd().isEqual(dto.getStart()) &&
@@ -101,7 +92,7 @@ public class MeetingService {
                     return true;
                 }
             }
-
+        }
         throw new PeriodCannotBeUsedException();
     }
 
@@ -148,7 +139,7 @@ public class MeetingService {
     public Meeting addUsersToMeeting(MeetingDto dto, Long... usersId) throws UserNotFoundException, MeetingNotFoundException {
         try {
             Meeting meeting = meetingRepository.findMeetingById(dto.getId());
-            if (meetingRepository.existsById(dto.getId()) && meeting !=null) {
+            if (meetingRepository.existsById(dto.getId()) && meeting != null) {
                 List<User> listParticipants = new ArrayList<>();
                 for (Long u : usersId) {
                     if (userRepository.existsById(u)) listParticipants.add(userRepository.findUserById(u));

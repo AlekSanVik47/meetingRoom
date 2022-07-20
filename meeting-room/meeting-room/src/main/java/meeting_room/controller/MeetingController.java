@@ -30,19 +30,8 @@ public class MeetingController {
 	@Operation(description = "Добавление митинга")
 	@PostMapping
 	public ResponseEntity<Meeting> addMeetingController(@Parameter(description = "Добавление митинга", required = true)
-	@RequestBody(required = false) MeetingCreateDto request, boolean exception)
-			throws UserNotFoundException, PeriodCannotBeUsedException, ExceedsCapacityException, MinTimeIntervalException{
-		try {
-			return ResponseEntity.ok(meetingService.addMeeting(request));
-		} catch (UserNotFoundException e) {
-			throw new UserNotFoundException();
-		} catch (PeriodCannotBeUsedException e) {
-			throw new PeriodCannotBeUsedException();
-		} catch (ExceedsCapacityException e) {
-			throw new ExceedsCapacityException();
-		} catch (MinTimeIntervalException e) {
-			throw new MinTimeIntervalException();
-		}
+	@RequestBody(required = false) MeetingCreateDto request) {
+		return ResponseEntity.ok(meetingService.addMeeting(request));
 	}
 
 	@Operation(description = "Получение списка митингов пользователя")

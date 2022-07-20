@@ -14,13 +14,13 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
         unmappedTargetPolicy = IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-		uses = {UserMapper.class, RoomMapper.class})
+        uses = {UserMapper.class, RoomMapper.class})
 public interface MeetingMapper {
-	@Mapping(target = "room", source = "roomDto")
-	@Mapping(target = "ownerID", source = "userDto")
-	Meeting toMeeting(MeetingDto meetingDto) ;
+    @Mapping(target = "room", source = "roomDto")
+    @Mapping(target = "ownerID", source = "userDto")
+    Meeting toMeeting(MeetingDto meetingDto);
 
-//	@Mapping(target = "meetingCreateDto.roomId", source = "roomDto")
-//	@Mapping(target = "meetingCreateDto.ownerIDId", source = "userDto")
-	Meeting createMeetingToMeeting(MeetingCreateDto dto);
+//    @Mapping(target = "roomId", source = "roomDto")
+//    @Mapping(target = "ownerIDId", source = "userDto")
+    Meeting createMeetingToMeeting(MeetingCreateDto dto);
 }
