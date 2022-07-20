@@ -47,10 +47,10 @@ public class User {
         this.id = id;
     }
 
-    @ManyToMany(cascade={CascadeType.MERGE})
-    @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="userId", referencedColumnName="id")},
-            inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
-    private List<Meeting> meetingList;
+//    @ManyToMany(cascade={CascadeType.MERGE})
+//    @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="userId", referencedColumnName="id")},
+//            inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
+//    private List<Meeting> meetingList;
 
 
 }

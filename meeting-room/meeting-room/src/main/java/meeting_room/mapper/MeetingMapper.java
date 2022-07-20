@@ -20,7 +20,7 @@ public interface MeetingMapper {
     @Mapping(target = "ownerID", source = "userDto")
     Meeting toMeeting(MeetingDto meetingDto);
 
-//    @Mapping(target = "roomId", source = "roomDto.id")
-//    @Mapping(target = "ownerIDId", source = "userDto.id")
+    @Mapping(target = "room.id", source = "roomId")
+    @Mapping(target = "ownerID.id", source = "ownerIDId")
     Meeting createMeetingToMeeting(MeetingCreateDto meetingCreateDto);
 }

@@ -40,7 +40,7 @@ public class MeetingService {
 
     @ExceptionHandler
     public Meeting addMeeting(MeetingCreateDto meetingCreateDto) {
-        Meeting meeting = meetingMapper.createMeetingToMeeting(meetingCreateDto);
+        Meeting meeting = new Meeting();
         ZonedDateTime startMeet = installStartTime(meetingCreateDto);
         ZonedDateTime endMeet = installEndTime(meetingCreateDto);
 
