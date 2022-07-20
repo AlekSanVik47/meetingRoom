@@ -15,6 +15,7 @@ import meeting_room.repositories.RoomRepository;
 import meeting_room.repositories.UserRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +38,7 @@ public class MeetingService {
     private final UserServiceImpl userService;
     private final int MIN_MEET_INTERVAL = 30;
 
-
+    @ExceptionHandler
     public Meeting addMeeting(MeetingCreateDto meetingCreateDto)
             throws UserNotFoundException, PeriodCannotBeUsedException, ExceedsCapacityException, MinTimeIntervalException {
         Meeting meeting = meetingMapper.createMeetingToMeeting(meetingCreateDto);
@@ -48,7 +49,9 @@ public class MeetingService {
         users.add(user);
         Room room = roomRepository.findRoomById(meetingCreateDto.getRoomId());
         try {
-            if (meetingTimeCheckService(meetingCreateDto) && checkMinMeetInterval(meetingCreateDto)) {
+            if (meetingTimeCheckService(meetingCreateDto)
+                    && checkMinMeetInterval(meetingCreateDto)
+                    && userRepository.existsById(user.getId())) {
                 meeting.setOwnerID(user);
                 meeting.setUserList(users);
                 meeting.setId(user.getId());
@@ -82,16 +85,23 @@ public class MeetingService {
 
     }
 
+    @ExceptionHandler
     public boolean meetingTimeCheckService(MeetingCreateDto dto) throws PeriodCannotBeUsedException {
         List<Meeting> meetingList = getMeetingsService();
-        for (Meeting m : meetingList) {
-            if ((m.getEnd().isBefore(dto.getEnd())) ||
-                    m.getEnd().isEqual(dto.getStart()) &&
-                            (m.getStart().isAfter(dto.getEnd()) ||
-                                    m.getStart().isEqual(dto.getEnd()))) {
+        if (meetingList == null){
+            if (dto.getStart().isBefore(dto.getStart())){
                 return true;
             }
         }
+            for (Meeting m : meetingList) {
+                if ((m.getEnd().isBefore(dto.getEnd())) ||
+                        m.getEnd().isEqual(dto.getStart()) &&
+                                (m.getStart().isAfter(dto.getEnd()) ||
+                                        m.getStart().isEqual(dto.getEnd()))) {
+                    return true;
+                }
+            }
+
         throw new PeriodCannotBeUsedException();
     }
 
@@ -124,6 +134,7 @@ public class MeetingService {
         return endTime;
     }
 
+    @ExceptionHandler
     public boolean checkMinMeetInterval(MeetingCreateDto meetingDto) throws MinTimeIntervalException {
         Duration intervalMeeting = Duration.between(meetingDto.getStart(), meetingDto.getEnd());
         int minutes = Math.toIntExact(intervalMeeting.toMinutes());
