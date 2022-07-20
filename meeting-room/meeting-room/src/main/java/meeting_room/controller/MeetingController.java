@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import meeting_room.dto.MeetingCreateDto;
 import meeting_room.dto.MeetingDto;
 import meeting_room.entities.Meeting;
-import meeting_room.exception.ExceedsCapacityException;
-import meeting_room.exception.MeetingNotFoundException;
-import meeting_room.exception.PeriodCannotBeUsedException;
-import meeting_room.exception.UserNotFoundException;
+import meeting_room.exception.*;
 import meeting_room.service.MeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +26,23 @@ public class MeetingController {
 	@Autowired
 	private final MeetingService meetingService;
 
+
 	@Operation(description = "Добавление митинга")
 	@PostMapping
 	public ResponseEntity<Meeting> addMeetingController(@Parameter(description = "Добавление митинга", required = true)
-	@RequestBody(required = false) MeetingCreateDto request)
-			throws PeriodCannotBeUsedException, ExceedsCapacityException{
-		return ResponseEntity.ok(meetingService.addMeeting(request));
-
+	@RequestBody(required = false) MeetingCreateDto request, boolean exception)
+			throws UserNotFoundException, PeriodCannotBeUsedException, ExceedsCapacityException, MinTimeIntervalException{
+		try {
+			return ResponseEntity.ok(meetingService.addMeeting(request));
+		} catch (UserNotFoundException e) {
+			throw new UserNotFoundException();
+		} catch (PeriodCannotBeUsedException e) {
+			throw new PeriodCannotBeUsedException();
+		} catch (ExceedsCapacityException e) {
+			throw new ExceedsCapacityException();
+		} catch (MinTimeIntervalException e) {
+			throw new MinTimeIntervalException();
+		}
 	}
 
 	@Operation(description = "Получение списка митингов пользователя")

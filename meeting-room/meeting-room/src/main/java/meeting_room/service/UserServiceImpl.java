@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,8 @@ public class UserServiceImpl implements UserService {
 		List<User> userList = userRepository.findAll();
 		return userList;
 	}
-	User getUser(Long userId)throws UsernameNotFoundException {
+	@ExceptionHandler
+	public User getUser(Long userId)throws UserNotFoundException {
 		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 	}
 

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import meeting_room.dto.UserDto;
 import meeting_room.entities.User;
+import meeting_room.exception.UserNotFoundException;
 import meeting_room.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +47,16 @@ public class UserController {
 		List<User> userList = userService.getAllUsers();
 		return ResponseEntity.ok(userList);
 	}
+
+	@Operation(description = "Получение пользователя по идентификатору")
+	@GetMapping(value = "{userId}")
+	public ResponseEntity<User> getUserController (@Parameter(description = "Пользователь по идентификатору")
+													   @PathVariable(value = "userId")Long userId, boolean exception){
+		try {
+			return ResponseEntity.ok(userService.getUser(userId));
+		} catch (UserNotFoundException e) {
+			throw new UserNotFoundException();
+		}
+	}
+
 }
