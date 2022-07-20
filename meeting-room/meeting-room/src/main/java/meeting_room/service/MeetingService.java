@@ -43,17 +43,18 @@ public class MeetingService {
         Meeting meeting = meetingMapper.createMeetingToMeeting(meetingCreateDto);
         ZonedDateTime startMeet = installStartTime(meetingCreateDto);
         ZonedDateTime endMeet = installEndTime(meetingCreateDto);
-        User user = userService.getUser(meetingCreateDto.getOwnerIDId());
+
+        User owner = userRepository.findUserById(meetingCreateDto.getOwnerIDId());
+//        User user = userService.getUser(meetingCreateDto.getOwnerIDId());
         List<User> users = new ArrayList<>();
-        users.add(user);
+        users.add(owner);
         Room room = roomRepository.findRoomById(meetingCreateDto.getRoomId());
         if (meetingTimeCheckService(meetingCreateDto)
                 && checkMinMeetInterval(meetingCreateDto)) {
-            meeting.setStart(startMeet);
-            meeting.setEnd(endMeet);
+            meeting.setStartMeet(startMeet);
+            meeting.setEndMeet(endMeet);
             meeting.setRoom(room);
-            meeting.setId(user.getId());
-            meeting.setOwnerID(user);
+            meeting.setOwnerID(owner);
             meeting.setUserList(users);
         }
         System.out.println(meetingRepository.save(meeting));
@@ -78,17 +79,17 @@ public class MeetingService {
     public boolean meetingTimeCheckService(MeetingCreateDto dto) throws PeriodCannotBeUsedException {
         List<Meeting> meetingList = getMeetingsService();
         if (meetingList.size() == 0) {
-            if (dto.getStart().isBefore(dto.getEnd())) {
-                System.out.println(dto.getStart().isBefore(dto.getStart()));
+            if (dto.getStartMeet().isBefore(dto.getEndMeet())) {
+                System.out.println(dto.getStartMeet().isBefore(dto.getStartMeet()));
                 return true;
             }
         }
         if (meetingList.size() > 0) {
             for (Meeting m : meetingList) {
-                if ((m.getEnd().isBefore(dto.getEnd())) ||
-                        m.getEnd().isEqual(dto.getStart()) &&
-                                (m.getStart().isAfter(dto.getEnd()) ||
-                                        m.getStart().isEqual(dto.getEnd()))) {
+                if ((m.getStartMeet().isBefore(dto.getEndMeet())) ||
+                        m.getEndMeet().isEqual(dto.getStartMeet()) &&
+                                (m.getStartMeet().isAfter(dto.getEndMeet()) ||
+                                        m.getStartMeet().isEqual(dto.getEndMeet()))) {
                     return true;
                 }
             }
@@ -97,8 +98,8 @@ public class MeetingService {
     }
 
     public int getMeetingTime(MeetingCreateDto meetingDto) {
-        ZonedDateTime startMeeting = meetingDto.getStart();
-        ZonedDateTime endMeeting = meetingDto.getEnd();
+        ZonedDateTime startMeeting = meetingDto.getStartMeet();
+        ZonedDateTime endMeeting = meetingDto.getEndMeet();
         Duration difference = Duration.between(startMeeting, endMeeting);
         int meetTime = (int) difference.toMinutes();
         return meetTime;
@@ -112,24 +113,24 @@ public class MeetingService {
     }
 
     public ZonedDateTime installStartTime(MeetingCreateDto meetingDto) {
-        LocalDate date = meetingDto.getStart().toLocalDate();
-        LocalTime time = meetingDto.getStart().toLocalTime();
+        LocalDate date = meetingDto.getStartMeet().toLocalDate();
+        LocalTime time = meetingDto.getStartMeet().toLocalTime();
         ZonedDateTime startTime = ZonedDateTime.of(date, time, ZoneId.systemDefault());
         return startTime;
     }
 
     public ZonedDateTime installEndTime(MeetingCreateDto meetingDto) {
-        LocalDate date = meetingDto.getStart().toLocalDate();
-        LocalTime time = meetingDto.getStart().toLocalTime();
+        LocalDate date = meetingDto.getEndMeet().toLocalDate();
+        LocalTime time = meetingDto.getEndMeet().toLocalTime();
         ZonedDateTime endTime = ZonedDateTime.of(date, time, ZoneId.systemDefault());
         return endTime;
     }
 
     @ExceptionHandler
     public boolean checkMinMeetInterval(MeetingCreateDto meetingDto) throws MinTimeIntervalException {
-        Duration intervalMeeting = Duration.between(meetingDto.getStart(), meetingDto.getEnd());
+        Duration intervalMeeting = Duration.between(meetingDto.getStartMeet(), meetingDto.getEndMeet());
         int minutes = Math.toIntExact(intervalMeeting.toMinutes());
-        if (meetingDto.getStart().isBefore(meetingDto.getEnd()) &&
+        if (meetingDto.getStartMeet().isBefore(meetingDto.getEndMeet()) &&
                 minutes >= MIN_MEET_INTERVAL) {
             return true;
         }

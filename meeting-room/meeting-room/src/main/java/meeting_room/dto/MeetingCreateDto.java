@@ -15,8 +15,8 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Schema(description = "Транспортный объект встречи")
 public class MeetingCreateDto implements Serializable {
-    private ZonedDateTime start;
-    private ZonedDateTime end;
+    private ZonedDateTime startMeet;
+    private ZonedDateTime endMeet;
     private Long roomId;
     private Long ownerIDId;
 }

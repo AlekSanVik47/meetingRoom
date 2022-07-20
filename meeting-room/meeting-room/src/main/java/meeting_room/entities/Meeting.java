@@ -20,11 +20,11 @@ public class Meeting {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "start")
-    private ZonedDateTime start;
+    @Column(name = "startMeet")
+    private ZonedDateTime startMeet;
 
-    @Column(name = "end")
-    private ZonedDateTime end;
+    @Column(name = "endMeet")
+    private ZonedDateTime endMeet;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "roomId", unique = true, nullable = false)
