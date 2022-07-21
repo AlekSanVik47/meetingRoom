@@ -27,15 +27,16 @@ public class UserController {
 
 	@Operation(description = "Получение списка участников митинга")
 	@GetMapping(produces = {"application/json"})
-	public ResponseEntity <List<User>> getAllUsersByMeetingController(@Parameter(description = "Список участников митинга")
-																		  @RequestParam Long meetingId){
-		List<User> users=userService.getAllUsersByMeeting(meetingId);
+	public ResponseEntity<List<User>> getAllUsersByMeetingController(@Parameter(description = "Список участников митинга")
+																	 @RequestParam Long meetingId) {
+		List<User> users = userService.getAllUsersByMeeting(meetingId);
 		return ResponseEntity.ok(users);
 	}
+
 	@Operation(description = "Сохранение пользователя в БД")
 	@PostMapping
-	public ResponseEntity <User> saveUserController(@Parameter(description = "Сохранение пользователя",required = true)
-													@RequestBody(required = false) UserDto request){
+	public ResponseEntity<User> saveUserController(@Parameter(description = "Сохранение пользователя", required = true)
+												   @RequestBody(required = false) UserDto request) {
 		return ResponseEntity.ok(userService.saveUser(request));
 	}
 
@@ -43,20 +44,15 @@ public class UserController {
 	@GetMapping(value = "{list}",
 			produces = {"application/json"})
 	public ResponseEntity<List<User>> getAllUsersController(@Parameter(description = "Список пользователей")
-															@PathVariable(value = "list")String list){
+															@PathVariable(value = "list") String list) {
 		List<User> userList = userService.getAllUsers();
 		return ResponseEntity.ok(userList);
 	}
 
 	@Operation(description = "Получение пользователя по идентификатору")
 	@GetMapping(value = "{userId}")
-	public ResponseEntity<User> getUserController (@Parameter(description = "Пользователь по идентификатору")
-													   @PathVariable(value = "userId")Long userId, boolean exception){
-		try {
-			return ResponseEntity.ok(userService.getUser(userId));
-		} catch (UserNotFoundException e) {
-			throw new UserNotFoundException();
-		}
+	public ResponseEntity<User> getUserController(@Parameter(description = "Пользователь по идентификатору")
+												  @PathVariable(value = "userId") Long userId) {
+		return ResponseEntity.ok(userService.getUser(userId));
 	}
-
 }

@@ -1,7 +1,9 @@
 package meeting_room.repositories;
 
+import meeting_room.entities.Meeting;
 import meeting_room.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

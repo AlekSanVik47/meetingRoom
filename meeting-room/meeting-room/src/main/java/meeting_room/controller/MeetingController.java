@@ -37,15 +37,14 @@ public class MeetingController {
 	@Operation(description = "Получение списка митингов пользователя")
 	@GetMapping(produces = {"application/json"})
 	public ResponseEntity<List<Meeting>> getMeetingByUserController(@Parameter(description = "Список митингов пользователя")
-																	@RequestParam Long userId, Long roomId) {
-		List<Meeting> meetings = meetingService.getMeetingByUser(userId);
+																	@RequestParam Long userId) {
+		List<Meeting> meetings = meetingService.getUserMeetingList(userId);
 		return ResponseEntity.ok(meetings);
 	}
 	@Operation(description = "Добавление участников")
 	@PutMapping
 	public ResponseEntity<Meeting> addUsersToMeetingController(@Parameter(description = "Добавление участников", required = true)
-															   @RequestBody(required = false) MeetingDto request, Long user1, Long user2)
-			throws UserNotFoundException, MeetingNotFoundException {
+															   @RequestBody(required = false) MeetingDto request, Long user1, Long user2) {
 		return ResponseEntity.ok(meetingService.addUsersToMeeting(request, 1L, 1L, 2L));
 	}
 }

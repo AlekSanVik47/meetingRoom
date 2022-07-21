@@ -71,7 +71,6 @@ public class MeetingService {
         meetings.stream()
                 .forEach((meeting -> meeting.getUserList()
                         .forEach(User::getId)));
-        System.out.println(meetings);
         return meetings;
 
     }
@@ -181,6 +180,8 @@ public class MeetingService {
         }
         throw new LateLimitException();
     }
-
+ public List<Meeting> getUserMeetingList(Long userId){
+        return meetingRepository.getUserMeetings(userId);
+ }
 
 }
