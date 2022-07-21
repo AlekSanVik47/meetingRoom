@@ -112,7 +112,9 @@ public class MeetingService {
 //        return ZonedDateTime.parse(dateTime.format(formatter));
          return dateTime;
     }
-
+/*
+* добавил методы для получения часового пояса
+* */
     public MeetingCreateDto getZoneToDto(MeetingCreateDto dto){
         dto.setStartMeet(getTimeDateZone(dto.getStartMeet()));
         dto.setEndMeet(getTimeDateZone(dto.getEndMeet()));
