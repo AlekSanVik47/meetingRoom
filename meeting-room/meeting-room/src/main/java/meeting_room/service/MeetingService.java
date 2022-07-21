@@ -173,13 +173,13 @@ public class MeetingService {
     * Ограничение по выборке неделя от текущей даты определено в PLANNING_DATE_LIMIT
     * */
     @ExceptionHandler
-    public List<Meeting> planningPeriod(ZonedDateTime startMeet) throws PeriodCannotBeUsedException{
+    public List<Meeting> planningPeriod(ZonedDateTime startMeet) throws LateLimitException{
         if ((startMeet.isAfter(currentDateTime) || startMeet.isEqual(currentDateTime))
         && startMeet.isBefore(currentDateTime.plusWeeks(1))){
             List<Meeting> meetings = meetingRepository.weeklyMeetingList(PLANNING_DATE_LIMIT);
             return meetings;
         }
-        throw new PeriodCannotBeUsedException();
+        throw new LateLimitException();
     }
 
 

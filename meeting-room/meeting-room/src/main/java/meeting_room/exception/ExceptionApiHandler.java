@@ -34,6 +34,11 @@ public class ExceptionApiHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorMessage(exception.getMessage()));
     }
-
+  @ExceptionHandler(LateLimitException.class)
+    public ResponseEntity<ErrorMessage> lateLimitException(LateLimitException exception){
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorMessage(exception.getMessage()));
+  }
 
 }
