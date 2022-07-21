@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -38,14 +37,15 @@ public class MeetingService {
     private final UserServiceImpl userService;
     private final int MIN_MEET_INTERVAL = 30;
 
+    private final ZonedDateTime currentDateTime = ZonedDateTime.now();
+    private final ZonedDateTime PLANNING_DATE_LIMIT = currentDateTime.plusWeeks(1);
+
     @ExceptionHandler
     public Meeting addMeeting(MeetingCreateDto meetingCreateDto) {
         Meeting meeting = new Meeting();
         ZonedDateTime startMeet = installStartTime(meetingCreateDto);
         ZonedDateTime endMeet = installEndTime(meetingCreateDto);
-
         User owner = userRepository.findUserById(meetingCreateDto.getOwnerIDId());
-//        User user = userService.getUser(meetingCreateDto.getOwnerIDId());
         List<User> users = new ArrayList<>();
         users.add(owner);
         Room room = roomRepository.findRoomById(meetingCreateDto.getRoomId());
@@ -57,13 +57,14 @@ public class MeetingService {
             meeting.setOwnerID(owner);
             meeting.setUserList(users);
         }
-        System.out.println(meetingRepository.save(meeting));
+       meetingRepository.save(meeting);
         return meeting;
     }
 
     public List<Meeting> getMeetingsService() {
         return meetingRepository.findAll();
     }
+
 
     public List<Meeting> getMeetingByUser(Long userId) {
         List<Meeting> meetings = meetingRepository.findAll();
@@ -77,24 +78,24 @@ public class MeetingService {
 
     @ExceptionHandler
     public boolean meetingTimeCheckService(MeetingCreateDto dto) throws PeriodCannotBeUsedException {
-        List<Meeting> meetingList = getMeetingsService();
+        List<Meeting> meetingList = planningPeriod(dto.getStartMeet());
         if (meetingList.size() == 0) {
             if (dto.getStartMeet().isBefore(dto.getEndMeet())) {
-                System.out.println(dto.getStartMeet().isBefore(dto.getStartMeet()));
                 return true;
             }
         }
-        if (meetingList.size() > 0) {
-            for (Meeting m : meetingList) {
-                if ((m.getStartMeet().isBefore(dto.getEndMeet())) ||
-                        m.getEndMeet().isEqual(dto.getStartMeet()) &&
-                                (m.getStartMeet().isAfter(dto.getEndMeet()) ||
-                                        m.getStartMeet().isEqual(dto.getEndMeet()))) {
-                    return true;
-                }
+        for (Meeting m : meetingList) {
+            if (m.getStartMeet().isEqual(dto.getStartMeet())) {
+                throw new PeriodCannotBeUsedException();
+            }
+            if ((m.getStartMeet().isBefore(dto.getStartMeet()) || m.getStartMeet().isEqual(dto.getStartMeet())) && dto.getStartMeet().isBefore(m.getEndMeet())) {
+                throw new PeriodCannotBeUsedException();
+            }
+            if ((dto.getStartMeet().isBefore(m.getStartMeet()) || dto.getStartMeet().isEqual(m.getStartMeet())) && m.getStartMeet().isBefore(dto.getEndMeet())) {
+                throw new PeriodCannotBeUsedException();
             }
         }
-        throw new PeriodCannotBeUsedException();
+        return true;
     }
 
     public int getMeetingTime(MeetingCreateDto meetingDto) {
@@ -105,11 +106,22 @@ public class MeetingService {
         return meetTime;
     }
 
-    public String getTimeDateFormatting(ZonedDateTime dateTime) {
+    public ZonedDateTime getTimeDateZone(ZonedDateTime dateTime) {
         dateTime = ZonedDateTime.of(LocalDateTime.from(dateTime), dateTime.getZone());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return dateTime.format(formatter);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//        return ZonedDateTime.parse(dateTime.format(formatter));
+         return dateTime;
+    }
 
+    public MeetingCreateDto getZoneToDto(MeetingCreateDto dto){
+        dto.setStartMeet(getTimeDateZone(dto.getStartMeet()));
+        dto.setEndMeet(getTimeDateZone(dto.getEndMeet()));
+        return dto;
+    }
+    public Meeting getZoneToMeeting(Meeting meeting){
+        meeting.setStartMeet(getTimeDateZone(meeting.getStartMeet()));
+        meeting.setEndMeet(getTimeDateZone(meeting.getStartMeet()));
+        return meeting;
     }
 
     public ZonedDateTime installStartTime(MeetingCreateDto meetingDto) {
@@ -155,5 +167,18 @@ public class MeetingService {
         }
         return null;
     }
+    /*
+    * Ограничение по выборке неделя от текущей даты определено в PLANNING_DATE_LIMIT
+    * */
+    @ExceptionHandler
+    public List<Meeting> planningPeriod(ZonedDateTime startMeet) throws PeriodCannotBeUsedException{
+        if ((startMeet.isAfter(currentDateTime) || startMeet.isEqual(currentDateTime))
+        && startMeet.isBefore(currentDateTime.plusWeeks(1))){
+            List<Meeting> meetings = meetingRepository.weeklyMeetingList(PLANNING_DATE_LIMIT);
+            return meetings;
+        }
+        throw new PeriodCannotBeUsedException();
+    }
+
 
 }
