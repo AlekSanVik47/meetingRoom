@@ -41,10 +41,8 @@ public class UserController {
 	}
 
 	@Operation(description = "Получение списка пользователей")
-	@GetMapping(value = "{list}",
-			produces = {"application/json"})
-	public ResponseEntity<List<User>> getAllUsersController(@Parameter(description = "Список пользователей")
-															@PathVariable(value = "list") String list) {
+	@GetMapping
+	public ResponseEntity<List<User>> getAllUsersController() {
 		List<User> userList = userService.getAllUsers();
 		return ResponseEntity.ok(userList);
 	}

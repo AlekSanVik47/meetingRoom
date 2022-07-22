@@ -12,8 +12,10 @@ import meeting_room.service.MeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -47,4 +49,18 @@ public class MeetingController {
 															   @RequestBody(required = false) MeetingDto request, Long user1, Long user2) {
 		return ResponseEntity.ok(meetingService.addUsersToMeeting(request, 1L, 1L, 2L));
 	}
+
+//	@RequestMapping("/")
+//	public ModelAndView welcome() {
+//		ModelAndView modelAndView = new ModelAndView();
+//		modelAndView.setViewName("home.html");
+//		return modelAndView;
+//	}
+//	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
+//	public String index(Model model) {
+//
+//		model.addAttribute("message");
+//
+//		return "index";
+//	}
 }
