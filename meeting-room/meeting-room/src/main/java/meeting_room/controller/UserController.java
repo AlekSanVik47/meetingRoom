@@ -46,4 +46,11 @@ public class UserController {
 		List<User> userList = userService.getAllUsers();
 		return ResponseEntity.ok(userList);
 	}
+	@Operation(description = "Обновление данных пользователя в БД")
+	@PutMapping(value = "{userId}")
+	public ResponseEntity <User> updateUserController(@Parameter(description = "Сохранение пользователя",required = true)
+														  @RequestBody(required = false) UserDto request,
+	                                                      @RequestParam("userId") Long userId){
+		return ResponseEntity.ok(userService.updateUser(request,userId));
+	}
 }
