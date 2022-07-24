@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import meeting_room.dto.RoomDto;
+import meeting_room.dto.UserDto;
 import meeting_room.entities.Room;
+import meeting_room.entities.User;
 import meeting_room.service.RoomService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,5 +45,19 @@ public class RoomController {
 	public ResponseEntity<Room> getRoomByRoomNumberController(@Parameter(description = "Получение комнаты по номеру")
 												  @PathVariable int roomNumber ){
 		return ResponseEntity.ok(roomService.getRoomByRoomNumber(roomNumber));
+	}
+	@Operation(description = "Обновление данных комнаты в БД")
+	@PutMapping(value = "{roomId}")
+	public ResponseEntity<Room> roomUpdateController(@Parameter(description = "Обновление данных комнаты", required = true)
+													 @RequestBody(required = false) RoomDto request,
+													 @RequestParam("roomId") Long roomId) {
+		return ResponseEntity.ok(roomService.roomUpdate(request,roomId));
+	}
+	@Operation(description = "Удаление комнаты по ID")
+	@DeleteMapping(value = "{roomId}")
+	public ResponseEntity<Object> deleteRoomController(@Parameter(description = "Удаление комнаты", required = true)
+													   @PathVariable(value = "userId") Long roomId){
+		roomService.roomDelete(roomId);
+		return ResponseEntity.noContent().build();
 	}
 }

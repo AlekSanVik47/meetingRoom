@@ -19,4 +19,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     @Query("select m from Meeting m where m.userList in ?1")
     List<Meeting> listOfParticipants(Collection<User> userLists);
+
+    @Query("select m from Meeting m where m.room.id = ?1")
+    List<Meeting> getMeetingsByRoomId(Long id);
+
 }

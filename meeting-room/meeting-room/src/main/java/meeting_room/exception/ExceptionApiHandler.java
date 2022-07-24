@@ -52,5 +52,9 @@ public class ExceptionApiHandler {
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(new ErrorMessage(exception.getMessage()));
     }
-
+@ExceptionHandler(RoomHasMeetingsException.class)
+    public ResponseEntity<ErrorMessage> roomHasMeetingsException(RoomHasMeetingsException exception){return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ErrorMessage(exception.getMessage()));
+    }
 }

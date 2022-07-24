@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import meeting_room.dto.MeetingCreateDto;
 import meeting_room.dto.MeetingDto;
+import meeting_room.dto.RoomDto;
 import meeting_room.entities.Meeting;
+import meeting_room.entities.Room;
 import meeting_room.exception.*;
 import meeting_room.service.MeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +48,21 @@ public class MeetingController {
 	@Operation(description = "Добавление участников")
 	@PutMapping
 	public ResponseEntity<Meeting> addUsersToMeetingController(@Parameter(description = "Добавление участников", required = true)
-															   @RequestBody(required = false) MeetingDto request, Long user1, Long user2) {
-		return ResponseEntity.ok(meetingService.addUsersToMeeting(request, 1L, 1L, 2L));
+															   @RequestBody(required = false) MeetingDto request, Long ...users) {
+		return ResponseEntity.ok(meetingService.addUsersToMeeting(request, users));
 	}
-
+	@Operation(description = "Обновление данных встречи в БД")
+	@PutMapping(value = "{meetingId}")
+	public ResponseEntity<Meeting> meetingUpdateController(@Parameter(description = "Обновление данных встречи", required = true)
+															   @RequestParam("meetingId") Long meetingId,
+													           @RequestBody(required = false) MeetingDto request, Long ...users) {
+		return ResponseEntity.ok(meetingService.meetingUpdate(request, meetingId, users));
+	}
+	@Operation(description = "Удаление комнаты по ID")
+	@DeleteMapping(value = "{meetingId}")
+	public ResponseEntity<Object> deleteMeetingController(@Parameter(description = "Удаление комнаты", required = true)
+													   @PathVariable(value = "meetingId") Long meetingId){
+		meetingService.meetingDelete(meetingId);
+		return ResponseEntity.noContent().build();
+	}
 }
