@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-		Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByPhone(phone));
-		User user = optionalUser.orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+		Optional<User> optionalUser= Optional.ofNullable(userRepository.findUserByPhone(phone));
+		User user = optionalUser.orElseThrow(()-> new UsernameNotFoundException("Пользователь не найден"));
 		return (UserDetails) user;
 	}
 
@@ -42,8 +43,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User saveUser(UserDto userDto) {
-		User user = userMapper.userDtoToUser(userDto);
-		if (findByUserPhone(userDto.getPhone()) != null) {
+		User user= userMapper.userDtoToUser(userDto);
+		if (findByUserPhone(userDto.getPhone())!=null){
 			return userRepository.findUserByPhone(userDto.getPhone());
 		}
 		user.setLogin(userDto.getLogin());
@@ -56,32 +57,17 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
-	public User updateUser(UserDto dto, Long userId)/*throws UserNotFoundException*/ {
-		if (userRepository.existsById(userId)) {
-			User user = userRepository.findUserById(userId);
-			user.setPhone(dto.getPhone());
-			user.setName(dto.getName());
-			user.setSurname(dto.getSurname());
-			user.setPatronymic(dto.getPatronymic());
-			user.setPosition(dto.getPosition());
-			user.setLogin(dto.getLogin());
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
-			return userRepository.saveAndFlush(user);
-		}
-		/*throw UserNotFoundException();*/
-		return userRepository.findUserById(userId);
-	}
-
-	public List<User> getAllUsersByMeeting(Long meetingId) {
+	public List<User> getAllUsersByMeeting(Long meetingId){
 		return userRepository.findAllById(meetingId);
 	}
 
-	public List<User> getAllUsers() {
+	public List<User> getAllUsers(){
 		List<User> userList = userRepository.findAll();
 		return userList;
 	}
-
-	User getUser(Long userId) throws UsernameNotFoundException {
+	@ExceptionHandler
+	public User getUser(Long userId)throws UserNotFoundException {
 		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 	}
+
 }

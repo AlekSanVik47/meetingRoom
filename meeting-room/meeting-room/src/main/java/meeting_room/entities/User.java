@@ -1,5 +1,6 @@
 package meeting_room.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,10 +48,11 @@ public class User {
         this.id = id;
     }
 
-    @ManyToMany(cascade={CascadeType.MERGE})
-    @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="userId", referencedColumnName="id")},
-            inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
-    private List<Meeting> meetingList;
+//    @JsonIgnore
+//    @ManyToMany(cascade={CascadeType.MERGE})
+//    @JoinTable(name = "usersInMeeting", joinColumns = {@JoinColumn(name="userId", referencedColumnName="id")},
+//            inverseJoinColumns = {@JoinColumn(name="id", referencedColumnName="id")})
+//    private List<Meeting> meetingList;
 
 
 }

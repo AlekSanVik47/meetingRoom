@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Регистрация</title>
+    <style>
+
+        ul li {
+          list-style: none;
+        }
+        li {
+          text-align: right;
+          margin: 10px 0;
+        }
+        input {
+          width: 20%;
+          margin: 0 660px 0 5px;
+        }
+        h2 {
+          margin: 0 700px 0 100px;
+        }
+        form {
+          display: inline-block;
+          margin: -20px 0 0 -40px;
+        }
+
+
+    </style>
+</head>
+<body>
+<form method="POST" action="/create-user">
+    <ul>
+        <li><h2>Регистрация</h2></li>
+        <li>
+            <label>Имя:
+                <input type="text" name="name" placeholder="Введите имя..." autofocus="true"autofocus="true">
+            </label>
+        </li>
+        <li>
+            <label>Отчество:
+                <input type="text" name="patronymic" placeholder="Введите отчество...">
+            </label>
+        </li>
+        <li>
+            <label>Фамилия:
+                <input name="text" name="surname" placeholder="Введите фамилию...">
+            </label>
+        </li>
+        <li>
+            <label>Телефон:
+                <input type="tel" name="phone" placeholder="Введите номер телефона...">
+            </label>
+        </li>
+        <li>
+            <label>Должность:
+                <input type="text" name="position" placeholder="Введите должность..." >
+            </label>
+        </li>
+        <li>
+            <label>Логин:
+                <input type="login" name="login" placeholder="Введите login...">
+            </label>
+        </li>
+        <li>
+            <label>Пароль:
+                <input type="password" name="password" placeholder="Введите пароль...">
+            </label>
+        </li>
+
+        <li>
+            <input type="submit" value="Регистрация">
+        </li>
+
+    </ul>
+
+</form>
+
+</body>
+</html>

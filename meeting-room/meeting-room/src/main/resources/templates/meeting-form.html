@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Регистрация</title>
+    <style>
+
+        ul li {
+          list-style: none;
+        }
+        li {
+          text-align: right;
+          margin: 10px 0;
+        }
+        input {
+          width: 20%;
+          margin: 0 660px 0 5px;
+        }
+        h2 {
+          margin: 0 700px 0 100px;
+        }
+        form {
+          display: inline-block;
+          margin: -20px 0 0 -40px;
+        }
+
+
+    </style>
+</head>
+<body>
+<form method="POST" action="/meeting">
+    <ul>
+        <li><h2>Добавление встречи</h2></li>
+        <li>
+            <label>Начало:
+                <input type="datetime-local" name="startMeet" placeholder="Введите время начала..." autofocus="true"autofocus="true">
+            </label>
+        </li>
+        <li>
+            <label>Окончание:
+                <input type="datetime-local" name="endMeet" placeholder="Введите время окончания...">
+            </label>
+        </li>
+        <li>
+            <label class="input-group-text">Пользователь</label>
+                <div class="col-lg-3" th:object="${meeting}">
+                    <select class="form-control" id="meetingOrder" name="meetingOrder">
+                        <option value="">Выбрать организатора</option>
+                        <span th:text="${user.getUser()}" />
+                        <option th:each="user : ${users}"
+                                th:value="${user.surname}"
+                                th:text="${user.surname}+' : '+${user.name}"></option>
+                    </select>
+                </div>
+
+        </li>
+        <li>
+            <label>Номер комнаты:
+                <input type="text" name="room" placeholder="Введите номер комнаты...">
+            </label>
+        </li>
+
+        <li>
+            <input type="submit" value="Создать">
+        </li>
+        <li>
+            <input type="submit" value="Отменить">
+        </li>
+
+    </ul>
+
+</form>
+
+</body>
+</html>
