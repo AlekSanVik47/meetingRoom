@@ -25,13 +25,13 @@ public class UserController {
 	@Autowired
 	private final UserServiceImpl userService;
 
-	@Operation(description = "Получение списка участников митинга")
-	@GetMapping(produces = {"application/json"})
-	public ResponseEntity<List<User>> getAllUsersByMeetingController(@Parameter(description = "Список участников митинга")
-																	 @RequestParam Long meetingId) {
-		List<User> users = userService.getAllUsersByMeeting(meetingId);
-		return ResponseEntity.ok(users);
-	}
+//	@Operation(description = "Получение списка участников митинга")
+//	@GetMapping(produces = {"application/json"})
+//	public ResponseEntity<List<User>> getAllUsersByMeetingController(@Parameter(description = "Список участников митинга")
+//																	 @RequestParam Long meetingId) {
+//		List<User> users = userService.getAllUsersByMeeting(meetingId);
+//		return ResponseEntity.ok(users);
+//	}
 
 	@Operation(description = "Сохранение пользователя в БД")
 	@PostMapping
@@ -52,5 +52,19 @@ public class UserController {
 	public ResponseEntity<User> getUserController(@Parameter(description = "Пользователь по идентификатору")
 												  @PathVariable(value = "userId") Long userId) {
 		return ResponseEntity.ok(userService.getUser(userId));
+	}
+	@Operation(description = "Обновление данных пользователя в БД")
+	@PutMapping(value = "{userId}")
+	public ResponseEntity<User> userUpdateController(@Parameter(description = "Обновление данных пользователя", required = true)
+												   @RequestBody(required = false) UserDto request,
+	                                               @RequestParam("userId") Long userId) {
+		return ResponseEntity.ok(userService.userUpdate(request,userId));
+	}
+	@Operation(description = "Удаление пользователя по ID")
+	@DeleteMapping(value = "{userId}")
+	public ResponseEntity<Object> deleteUserController(@Parameter(description = "Удаление пользователя по ID", required = true)
+													   @PathVariable(value = "userId") Long userId){
+		userService.deleteUser(userId);
+		return ResponseEntity.noContent().build();
 	}
 }

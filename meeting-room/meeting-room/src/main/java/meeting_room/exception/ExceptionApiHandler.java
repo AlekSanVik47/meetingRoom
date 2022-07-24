@@ -40,5 +40,17 @@ public class ExceptionApiHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorMessage(exception.getMessage()));
   }
+    @ExceptionHandler(UserExistsException.class)
+    public ResponseEntity<ErrorMessage> userExistsException (UserExistsException exception){
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorMessage(exception.getMessage()));
+    }
+
+    @ExceptionHandler(UserHasMeetingsException.class)
+    public ResponseEntity<ErrorMessage> userHasMeetingsException (UserHasMeetingsException exception){return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(new ErrorMessage(exception.getMessage()));
+    }
 
 }

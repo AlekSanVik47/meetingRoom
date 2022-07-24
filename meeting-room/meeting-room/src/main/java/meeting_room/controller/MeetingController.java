@@ -50,17 +50,4 @@ public class MeetingController {
 		return ResponseEntity.ok(meetingService.addUsersToMeeting(request, 1L, 1L, 2L));
 	}
 
-//	@RequestMapping("/")
-//	public ModelAndView welcome() {
-//		ModelAndView modelAndView = new ModelAndView();
-//		modelAndView.setViewName("home.html");
-//		return modelAndView;
-//	}
-//	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
-//	public String index(Model model) {
-//
-//		model.addAttribute("message");
-//
-//		return "index";
-//	}
 }
