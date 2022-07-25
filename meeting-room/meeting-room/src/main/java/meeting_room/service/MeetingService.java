@@ -29,7 +29,7 @@ public class MeetingService {
 	private final MeetingRepository meetingRepository;
 	private final MeetingMapper meetingMapper;
 
-    private final RoomService roomService;
+	private final RoomService roomService;
 
 	private final UserRepository userRepository;
 	private final RoomRepository roomRepository;
@@ -164,10 +164,8 @@ public class MeetingService {
 			}
 		} catch (UserNotFoundException e) {
 			throw new UserNotFoundException();
-		} catch (MeetingNotFoundException e) {
-			throw new MeetingNotFoundException();
 		}
-		return null;
+		throw new MeetingNotFoundException();
 	}
 
 	/*
@@ -188,30 +186,29 @@ public class MeetingService {
 	}
 
 	@ExceptionHandler
-	public Meeting meetingUpdate(MeetingDto dto, Long meetingId, Long...usersId)throws MeetingNotFoundException {
-        if (meetingRepository.existsById(meetingId)){
-           Meeting meeting = meetingMapper.toMeeting(dto);
-           Room room = roomService.roomUpdate(dto.getRoomDto(), dto.getRoomDto().getId());
-           User owner = userRepository.findUserById(dto.getUserDto().getId());
-           List<User> users = meeting.getUserList();
-           users.add(owner);
-           users.addAll(addUsersToMeeting(dto, usersId).getUserList());
-           meeting.setStartMeet(dto.getStart());
-           meeting.setEndMeet(dto.getEnd());
-           meeting.setRoom(room);
-           meeting.setOwnerID(owner);
-           meeting.setUserList(users);
-           return meetingRepository.saveAndFlush(meeting);
-        }
-        throw new MeetingNotFoundException();
+	public Meeting meetingUpdate(MeetingDto dto, Long meetingId, Long... usersId) throws MeetingNotFoundException {
+		if (meetingRepository.existsById(meetingId)) {
+			Meeting meeting = meetingMapper.toMeeting(dto);
+			Room room = roomService.getRoomById(dto.getRoomDto().getId());
+			User owner = userRepository.findUserById(dto.getUserDto().getId());
+			List<User> users = addUsersToMeeting(dto, usersId).getUserList();
+			meeting.setStartMeet(dto.getStart());
+			meeting.setEndMeet(dto.getEnd());
+			meeting.setRoom(room);
+			meeting.setOwnerID(owner);
+			meeting.setUserList(users);
+			return meetingRepository.saveAndFlush(meeting);
+		}
+		throw new MeetingNotFoundException();
 	}
-    @ExceptionHandler
-    public void meetingDelete(Long meetingId) throws MeetingNotFoundException {
-        if (!meetingRepository.existsById(meetingId)) {
-           throw  new RoomHasMeetingsException();
-        } else {
-            meetingRepository.deleteById(meetingId);
-        }
-    }
+
+	@ExceptionHandler
+	public void meetingDelete(Long meetingId) throws MeetingNotFoundException {
+		if (!meetingRepository.existsById(meetingId)) {
+			throw new RoomHasMeetingsException();
+		} else {
+			meetingRepository.deleteById(meetingId);
+		}
+	}
 
 }

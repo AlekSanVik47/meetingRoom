@@ -27,8 +27,10 @@ public class RoomService {
 
 	private final MeetingRepository meetingRepository;
 
-	public Optional<Room> getRoomById(Long id) {
-		return roomRepository.findById(id);
+	public Room getRoomById(Long id)throws DataNotInDBException {
+		Optional<Room> optionalRoom = Optional.ofNullable(roomRepository.findRoomById(id));
+		Room room = optionalRoom.orElseThrow(()-> new DataNotInDBException());
+		return room;
 	}
 
 	public boolean capacityCheckService(int roomNumber, int countUser) throws ExceedsCapacityException {
@@ -52,7 +54,9 @@ public class RoomService {
 		return roomRepository.findAll();
 	}
 
-	public Room getRoomByRoomNumber(int roomNumber) {
+	@ExceptionHandler
+	public Room getRoomByRoomNumber(int roomNumber) throws DataNotInDBException{
+		if (roomRepository.findRoomByRoomNumber(roomNumber)== null) throw new DataNotInDBException();
 		return roomRepository.findRoomByRoomNumber(roomNumber);
 	}
 
@@ -75,4 +79,5 @@ public class RoomService {
 		if (!meetingRepository.getMeetingsByRoomId(roomId).isEmpty()) throw new RoomHasMeetingsException();
 		roomRepository.deleteById(roomId);
 	}
+
 }
